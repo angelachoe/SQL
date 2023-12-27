@@ -58,14 +58,34 @@ VALUES
 
 # Analysis 
 
-#Group the given companies by "3 weeks of pto", "2 weeks of pto", and "less than 2 weeks of pto" based on the paid_time_off_days. 
+#Group the given companies by "at least 3 weeks of pto", "at least 2 weeks of pto", and "less than 2 weeks of pto" based on the paid_time_off_days. 
 SELECT COUNT(*),
 CASE
-  WHEN paid_time_off_days >= 21 THEN "3 weeks PTO"
-  WHEN paid_time_off_days >= 14 THEN "2 weeks PTO"
+  WHEN paid_time_off_days >= 21 THEN "at least 3 weeks PTO"
+  WHEN paid_time_off_days >= 14 THEN "at least 2 weeks PTO"
   ELSE "less than 2 weeks PTO"
 END AS weeks_of_PTO
 FROM fortune_companies
 GROUP BY weeks_of_PTO;
+
+# Which of the industies have an average of at least 12 weeks of maternity leave, and what are their averages?
+SELECT industry, ROUND(AVG(maternity_leave_weeks),1) AS avg_maternity_leave_weeks
+FROM fortune_companies
+GROUP BY industry
+HAVING avg_maternity_leave_weeks >=12;
+
+# Which company offers healthcare benefits *and* at least 14 days of pto?
+SELECT company_name
+FROM fortune_companies
+WHERE healthcare_benefits= 1 AND paid_time_off_days>= 14;
+
+# What is the average number of employees from the companies excluding:Apple Inc., Walmart Inc., Exxon Mobil Corporation, 
+Amazon.com Inc., JPMorgan Chase & Co., Verizon Communications Inc.?
+SELECT ROUND(AVG(employees),2)
+FROM fortune_companies
+WHERE company_name NOT IN ("Apple Inc.", "Walmart Inc.", "Exxon Mobil Corporation", "Amazon.com Inc.", "JPMorgan Chase & Co.",
+                           "Verizon Communications Inc.");
+
+
 
 
