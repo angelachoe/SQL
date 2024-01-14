@@ -85,8 +85,15 @@ SELECT e.firstname AS 'First Name', e.lastname AS 'Last Name', ROUND(SUM(i.Total
 FROM chinook.employees e
 JOIN chinook.customers c ON e.employeeid= c.supportrepid
 JOIN chinook.invoices i ON c.customerid= i.customerid
-GROUP BY e.Employeeid;
+GROUP BY e.firstname;
 
 #14. Which sales agent made the most dollars in sales in 2009?
+SELECT e.firstname AS 'First Name', e.lastname AS 'Last Name', ROUND(SUM(i.Total),2) AS 'Total Sales'
+FROM chinook.employees e
+JOIN chinook.customers c ON e.employeeid= c.supportrepid
+JOIN chinook.invoices i ON c.customerid= i.customerid
+WHERE invoicedate BETWEEN '2009-01-01' AND '2009-12-31'
+GROUP BY e.firstname
+ORDER BY ROUND(SUM(i.Total),2) desc;
 
 
