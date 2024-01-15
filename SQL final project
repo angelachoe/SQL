@@ -1,0 +1,19 @@
+# In this analysis, I explore and query a Digital Media Store's dataset that contains tables for artists, albums, media tracks, invoices, and customers.
+
+#1. Group and count the playlists id by their playlist name and order them in a descending order.
+SELECT t.playlistid, p.name, count(t.trackid) AS playlist_count
+FROM chinook.playlist_track
+    JOIN chinook.playlists p
+    ON t.playlistid= p.playlistid
+GROUP BY t.playlistid
+ORDER BY count(t.trackid) desc;
+
+# After running the query, I learn that playlistid=1 and playlistid=8 are duplicates. 
+
+#2. Find the total sales made per year in descending order
+SELECT strftime('%Y', InvoiceDate) AS InvoiceYear, SUM(total) AS TotalSum
+FROM invoices
+WHERE InvoiceDate BETWEEN '2009-01-01' AND '2013-12-22'
+GROUP BY strftime('%Y', InvoiceDate)
+ORDER BY SUM(total) DESC
+
