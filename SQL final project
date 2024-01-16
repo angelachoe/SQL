@@ -17,3 +17,16 @@ WHERE InvoiceDate BETWEEN '2009-01-01' AND '2013-12-22'
 GROUP BY strftime('%Y', InvoiceDate)
 ORDER BY SUM(total) DESC
 
+#3. Create a new column named 'song_duration' to label a track '0-3 minutes' and so forth with 2 minute intervals and end with 
+    'More than 11 minutes'. Include the song count for each case. 
+SELECT count(trackid) AS num_of_songs,
+CASE
+    WHEN Milliseconds >=0 AND Milliseconds <180000 THEN '0-3 minutes'
+    WHEN Milliseconds >=180000 AND Milliseconds <300000 THEN '3-5 minutes'
+    WHEN Milliseconds >=300000 AND Milliseconds <420000 THEN '5-7 minutes'
+    WHEN Milliseconds >=420000 AND Milliseconds <540000 THEN '7-9 minutes'
+    WHEN Milliseconds >=540000 AND Milliseconds <660000 THEN '9-11 minutes'
+    ELSE 'More than 11 minutes'
+END AS song_durations
+FROM chinook.tracks
+GROUP BY song_durations;
