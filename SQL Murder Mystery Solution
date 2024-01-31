@@ -1,0 +1,59 @@
+SQL murder mystery Solution!!!
+
+SELECT *
+FROM sqlite_master;
+
+#To start investigating I'm looking up the murder in SQL city
+SELECT *
+FROM crime_scene_report 
+WHERE city='SQL City' AND type='murder';
+
+#looking up the witness #1
+SELECT *
+FROM person
+WHERE address_street_name='Northwestern Dr'
+ORDER BY address_number desc 
+LIMIT 1;
+
+#looking up the witness #2
+SELECT *
+FROM person
+WHERE address_street_name='Franklin Ave'
+AND name LIKE 'Annabel%'
+
+#Looking up what the witnesses said during their interview
+SELECT *
+FROM interview
+WHERE person_id=14887 OR person_id= 16371
+
+#Using a JOIN to look up Gold members with member_id start with "48Z" and checked into the Gym on Jan 09
+SELECT M.id, M.person_id, M.name
+FROM get_fit_now_check_in C
+JOIN get_fit_now_member M ON C.membership_id=M.id
+WHERE M.id LIKE '48Z%' 
+AND C.check_in_date= 20180109
+
+# Using a JOIN to look up the two ids from the previous Query to see who has the licenses number with "H42W'
+SELECT p.id AS person_id, p.name AS Name, dl.id AS License_id
+FROM person p
+JOIN drivers_license dl ON p.license_id=dl.id
+WHERE p.id=28819 OR p.id=67318 
+OR dl.id LIKE '%H42W%'
+
+#PART 2 OF SQL MURDER MYSTERY!
+
+#Finding the person who hired the murder
+SELECT * 
+FROM drivers_license
+WHERE height BETWEEN 65 AND 67 
+AND gender= 'female' 
+AND car_make='Tesla'
+AND hair_color= 'red' 
+
+#Using the three suspects to see who went to the SLQ Concert 3x int December 2017
+SELECT P.id, P.name, FBE.event_name, FBE.date 
+FROM facebook_event_checkin FBE
+JOIN person P ON FBE.person_id=P.id
+WHERE P.license_id IN (202298, 291182, 918773)
+AND FBE.event_name='SQL Symphony Concert' 
+AND FBE.date LIKE '201712%'
