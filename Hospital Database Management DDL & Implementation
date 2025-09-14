@@ -1,0 +1,230 @@
+# This project will design a Hospital Management System Database to store patient, employee, and surgical procedure information. 
+# The ERD, RDM, and Normalization process were completed before the creation of this database. 
+
+# SQL Data Definition Language
+
+CREATE TABLE Insurance (
+    insurance_code INT NOT NULL,
+    insurance_name VARCHAR(100),
+    insurance_status VARCHAR(50),
+    CONSTRAINT pk_Insurance PRIMARY KEY (insurance_code)
+);
+
+INSERT INTO Insurance VALUES (101, 'Blue Shield', 'Active'); 
+INSERT INTO Insurance VALUES (102, 'HealthFirst', 'Inactive'); 
+INSERT INTO Insurance VALUES (103, 'Aetna', 'Active'); 
+INSERT INTO Insurance VALUES (104, 'UnitedHealth', 'Active'); 
+INSERT INTO Insurance VALUES (105, 'Cigna', 'Active');
+
+CREATE TABLE Invoice (
+    invoice_num INT NOT NULL,
+    payment_type VARCHAR(50),
+    payment_date DATE,
+    payment_status VARCHAR(50),
+    insurance_code INT,
+    record_id INT,
+    CONSTRAINT pk_Invoice PRIMARY KEY (invoice_num),
+    CONSTRAINT fk_Invoice FOREIGN KEY (insurance_code) REFERENCES Insurance (insurance_code),
+    CONSTRAINT fk_Invoice_2 FOREIGN KEY (record_id) REFERENCES Patient_Record (record_id)
+);
+
+INSERT INTO Invoice VALUES (1, 'Credit', '2025-05-08', 'Paid', 101, 501); 
+INSERT INTO Invoice VALUES (2, 'Cash', '2025-05-07', 'Pending', 102, 502); 
+INSERT INTO Invoice VALUES (3, 'Debit', '2025-05-06', 'Paid', 103, 503); 
+INSERT INTO Invoice VALUES (4, 'Insurance', '2025-05-05', 'Pending', 104, 504); 
+INSERT INTO Invoice VALUES (5, ' Insurance', '2025-05-04', 'Paid', 105, 505);
+
+CREATE TABLE Procedure (
+    procedure_code INT NOT NULL,
+    procedure_name VARCHAR(100),
+    CONSTRAINT pk_Procedure PRIMARY KEY (procedure_code)
+);
+
+INSERT INTO Procedure VALUES (201, 'MRI'); 
+INSERT INTO Procedure VALUES (202, 'X-Ray');
+INSERT INTO Procedure VALUES (203, 'Ultrasound'); 
+INSERT INTO Procedure VALUES (204, 'CT Scan'); 
+INSERT INTO Procedure VALUES (205, 'Blood Test'); 
+
+CREATE TABLE Supplies (
+    supply_id INT NOT NULL,
+    supply_name VARCHAR(100),
+    supply_roomnumber VARCHAR(20),
+    procedure_code INT,  
+    CONSTRAINT pk_supplies PRIMARY KEY (supply_id),
+    CONSTRAINT fk_supplies FOREIGN KEY (procedure_code) REFERENCES Procedure (procedure_code)
+);
+
+INSERT INTO Supplies VALUES (301, 'Gauze', 'A101', 201); 
+INSERT INTO Supplies VALUES (302, 'Syringe', 'B203', 202); 
+INSERT INTO Supplies VALUES (303, 'Bandage', 'C304', 203); 
+INSERT INTO Supplies VALUES (304, 'Scalpel', 'D405', 204); 
+INSERT INTO Supplies VALUES (305, 'IV Bag', 'E506', 205);
+
+CREATE TABLE Patient (
+    patient_id INT NOT NULL,
+    patient_name VARCHAR(100),
+    patient_dob DATE,
+    patient_ssn VARCHAR(11),
+    patient_illness VARCHAR(100),
+    CONSTRAINT pk_Patient PRIMARY KEY (patient_id))
+
+INSERT INTO Patient VALUES (401, 'John Smith', '1985-07-12', '123-45-6789', 'Cough'); 
+INSERT INTO Patient VALUES (402, 'Jane Doe', '1992-03-23', '987-65-4321', 'Sprained ankle'); 
+INSERT INTO Patient VALUES (403, 'Alan Wu', '1978-11-04', '555-66-7777', 'Fracture'); 
+INSERT INTO Patient VALUES (404, 'Emily Clark', '2000-01-15', '888-99-0000', 'Headache'); 
+INSERT INTO Patient VALUES (405, 'Marcus Lin', '1995-06-30', '111-22-3333', 'Back pain'); 
+
+CREATE TABLE Patient_Record (
+    record_id INT NOT NULL,
+    medication_id INT,
+    department_id INT,
+    appointment_log_num INT,
+    patient_id INT,
+    Procedure_code INT,
+    CONSTRAINT pk_Patient_Record PRIMARY KEY (record_id),
+    CONSTRAINT fk_Patient_Record FOREIGN KEY (patient_id) REFERENCES Patient (patient_id),
+    CONSTRAINT fk_Patient__Record_2 FOREIGN KEY (Procedure_code) REFERENCES procedure (Procedure_code)
+    );
+
+INSERT INTO Patient_Record VALUES (501, 998, 701, 801, 401, 202); 
+INSERT INTO Patient_Record VALUES (502, 998, 703, 802, 402, 202); 
+INSERT INTO Patient_Record VALUES (503, 995, 705, 803, 403, 205); 
+INSERT INTO Patient_Record VALUES (504, 995, 705, 804, 404, 205); 
+INSERT INTO Patient_Record VALUES (505, 996, 701, 805, 405, 203); 
+
+CREATE TABLE Appointment_Log (
+    appointment_log_num INT NOT NULL,
+    appointment_date DATE,
+    appointment_time TIME,
+    record_id INT,
+    CONSTRAINT pk_Appointment_Log PRIMARY KEY (appointment_log_num),
+    CONSTRAINT fk_Appointment_Log FOREIGN KEY (record_id) REFERENCES Patient_Record (record_id)
+);
+
+INSERT INTO Appointment_Log VALUES (801, '2025-05-29', '09:00:00', 501); 
+INSERT INTO Appointment_Log VALUES (802, '2025-05-07', '11:30:00', 502); 
+INSERT INTO Appointment_Log VALUES (803, '2025-05-06', '14:15:00', 503); 
+INSERT INTO Appointment_Log VALUES (804, '2025-05-05', '08:45:00', 504); 
+INSERT INTO Appointment_Log VALUES (805, '2025-05-04', '12:00:00', 505); 
+
+CREATE TABLE Staff_Assignment (
+    assignment_id INT NOT NULL,
+    staff_id INT,
+    assignment_date DATE,
+    CONSTRAINT pk_Staff_Assignment PRIMARY KEY (assignment_id),
+    CONSTRAINT fk_Staff_Assignment FOREIGN KEY (staff_id) REFERENCES Staff (staff_id)
+);
+
+INSERT INTO Staff_Assignment VALUES (1001, 901, '2025-05-08'); 
+INSERT INTO Staff_Assignment VALUES (1002, 902, '2025-05-07'); 
+INSERT INTO Staff_Assignment VALUES (1003, 903, '2025-05-06'); 
+INSERT INTO Staff_Assignment VALUES (1004, 904, '2025-05-05'); 
+INSERT INTO Staff_Assignment VALUES (1005, 905, '2025-05-04'); 
+
+CREATE TABLE Staff (
+    staff_id INT NOT NULL,
+    staff_name VARCHAR(100),
+    department_id INT,
+    CONSTRAINT pk_Staff PRIMARY KEY (staff_id),
+    CONSTRAINT fk_Staff FOREIGN KEY (department_id) REFERENCES Department (department_id)
+);
+
+INSERT INTO Staff VALUES (901, 'Dr. Adams', 701); 
+INSERT INTO Staff VALUES (902, 'Nurse Lee', 702); 
+INSERT INTO Staff VALUES (903, 'Dr. Patel', 703); 
+INSERT INTO Staff VALUES (904, 'Nurse Stone', 701); 
+INSERT INTO Staff VALUES (905, 'Dr. Violet', 702); 
+
+CREATE TABLE Doctor (
+    staff_id INT NOT NULL,
+    doctor_name VARCHAR(100),
+    procedure_code INT,
+    CONSTRAINT pk_Doctor PRIMARY KEY (staff_id),
+    CONSTRAINT fk_Staff_Doctor FOREIGN KEY (staff_id) REFERENCES Staff (staff_id),
+    CONSTRAINT fk_Staff_Doctor_2 FOREIGN KEY (procedure_code) REFERENCES Procedure (procedure_code)
+);
+
+INSERT INTO Doctor VALUES (901, 'Dr. Adams', 201); 
+INSERT INTO Doctor VALUES (903, 'Dr. Patel', 203); 
+INSERT INTO Doctor VALUES (905, ‘Dr. Violet’, 202); 
+
+CREATE TABLE Nurse (
+    staff_id INT NOT NULL,
+    nurse_name VARCHAR(100),
+    CONSTRAINT pk_Nurse PRIMARY KEY (staff_id),
+    CONSTRAINT fk_Staff_Nurse FOREIGN KEY (staff_id) REFERENCES Staff (staff_id)
+);
+
+INSERT INTO Nurse VALUES (902, 'Nurse Lee'); 
+INSERT INTO Nurse VALUES (904, 'Nurse Stone');
+
+CREATE TABLE Department (
+    department_id INT NOT NULL,
+    employee_count INT,
+    bed_count INT,
+    CONSTRAINT pk_Department PRIMARY KEY (department_id)
+);
+
+INSERT INTO Department VALUES (701, 10, 20); 
+INSERT INTO Department VALUES (702, 8, 15); 
+INSERT INTO Department VALUES (703, 12, 25); 
+INSERT INTO Department VALUES (704, 7, 10); 
+INSERT INTO Department VALUES (705, 9, 18); 
+
+# The Supplies table must be altered to add a foreign key to connect it to the Procedure table.
+
+ALTER TABLE Supplies 
+ADD CONSTRAINT fk_supplies 
+FOREIGN KEY (procedure_code)
+REFERENCES Procedure(procedure_code); 
+
+# Now I will query my data. 
+
+# 1. The hospital receptionist has been asked to check all the appointments for patient “John Smith” with DOB of “1985-07-12”
+
+SELECT DISTINCT p.patient_name, al.appointment_date, al.appointment_time  
+FROM  (Patient p INNER JOIN Patient_record pr ON p.patient_id = pr.patient_id)  
+INNER JOIN Appointment_log al ON pr.appointment_log_num = al.appointment_log_num 
+WHERE p.patient_name = 'John Smith' AND p.patient_dob = #1985-07-12#
+
+# 2. The hospital administrator has asked to see a list of all staff members assigned to the department with id 702
+
+SELECT s.staff_id, s.staff_name, d.department_id   
+FROM  Staff s INNER JOIN Department d ON s.department_id = d.department_id   
+WHERE d.department_id = 702
+
+# 3. The medical director has asked to know the patients who had appointments from “2025-05-04” to “2025-05-05” under the Insurance ’Cigna’. 
+
+SELECT c.record_id, c.insurance_name, c.appointment_log_num
+FROM (SELECT pr.record_id, ins.insurance_code, ins.insurance_name, al.appointment_log_num, al.appointment_date
+    FROM ((appointment_log al 
+    INNER JOIN patient_record pr ON al.record_id = pr.record_id)
+    INNER JOIN invoice iv ON pr.record_id = iv.record_id)
+    INNER JOIN insurance ins ON iv.insurance_code = ins.insurance_code
+    WHERE ins.insurance_name = 'Cigna') c
+WHERE c.appointment_date BETWEEN #2025-05-04# AND #2025-05-05#;
+
+# 4. The Hospital wants to know the total number of beds available in the hospital for departments where the staff count is less than 2. Provide a query that shows the total bed count available.
+
+SELECT COUNT(s.staff_id) AS total_staff_num, d.department_id, d.bed_count
+FROM Staff s INNER JOIN Department d ON s.department_id = d.department_id
+GROUP BY d.department_id, d.bed_count
+HAVING  COUNT(s.staff_id)<2
+
+# 5. Write a query to show the patients and doctors involved in an X-Ray procedure.
+
+SELECT d.doctor_name, pa.patient_name, p.procedure_name
+FROM ((doctor d INNER JOIN [procedure] p ON d.procedure_code=p.procedure_code)
+INNER JOIN patient_record pr ON p.procedure_code=pr.procedure_code)
+INNER JOIN patient pa ON pr.patient_id=pa.patient_id
+WHERE p.procedure_name = 'X-Ray'
+
+# This project demonstrates the creation and implementation of a database created on Microsoft Access. 
+
+
+
+
+
+
+
